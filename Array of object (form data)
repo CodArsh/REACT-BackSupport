@@ -1,0 +1,73 @@
+import React, { useState } from "react";
+import { Container, Button, Form, Modal } from "react-bootstrap";
+import "./Users.css";
+function Users() {
+  const [modal, setModal] = useState(false);
+  const [formState,changeFormState] = useState([]);
+  const getData = (e) => {
+    e.preventDefault();
+    const allData = {};
+    const form = e.target;
+    const formData = new FormData(form);
+    for(let data of formData.entries()){
+        let key = data[0];
+        let value = data[1];
+        allData[key] = value;
+    }
+    return changeFormState((old_data)=>{
+        return [
+            ...old_data,
+            allData
+        ]
+    })
+  };
+  return (
+    <>
+      <Container>
+        <h2 className="text-primary display-5 text-center py-2 mt-5">
+          Arsil Malek's Production
+        </h2>
+        <Button className="add-user" onClick={() => setModal(true)}>
+          <i className="fa fa-plus"></i>
+        </Button>
+        <Modal show={modal} onHide={() => setModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              <i className="fa fa-user-plus me-2"></i>Add user
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={getData}>
+              <Form.Group className="mb-3">
+                <Form.Label>Username</Form.Label>
+                <Form.Control name="username" type="text" />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control name="email" type="text" />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Mobile</Form.Label>
+                <Form.Control name="mobile" type="text" />
+              </Form.Group>
+
+              <Form.Group className="mb-4">
+                <Form.Label>Upload</Form.Label>
+                <Form.Control name="picture" type="file" accept="image/*" />
+              </Form.Group>
+
+              <Button type="submit" variant="success" >Submit</Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
+      </Container>
+      {
+        console.log(formState)
+      }
+    </>
+  );
+}
+
+export default Users;
