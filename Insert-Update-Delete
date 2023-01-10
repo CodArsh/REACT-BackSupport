@@ -2,170 +2,202 @@ import React, { useState } from "react";
 import { Container, Button, Form, Modal, Table } from "react-bootstrap";
 import "./Users.css";
 function Users() {
-    const [modal, setModal] = useState(false);
-    const [formState, changeFormState] = useState([]);
-    const [submit, changeSubmit] = useState(true);
-    const [input, setInput] = useState({
-        username: '',
-        email: '',
-        mobile: ''
-    })
-    const setInputData = (e) => {
-        const input = e.target;
-        const value = input.value;
-        const key = input.name;
-        return setInput((old_data) => {
-            return {
-                ...old_data,
-                [key]: value,
-            }
-        })
+  const [modal, setModal] = useState(false);
+  const [formState, changeFormState] = useState([]);
+  const [submit, changeSubmit] = useState(true);
+  const [input, setInput] = useState({
+    username: "",
+    email: "",
+    mobile: "",
+  });
+  const setInputData = (e) => {
+    const input = e.target;
+    const value = input.value;
+    const key = input.name;
+    return setInput((old_data) => {
+      return {
+        ...old_data,
+        [key]: value,
+      };
+    });
+  };
+  const allData = {};
+  const getData = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    for (let data of formData.entries()) {
+      let key = data[0];
+      let value = data[1];
+      if (typeof value === "object") {
+        value = URL.createObjectURL(value);
+      }
+      allData[key] = value;
     }
-    const allData = {};
-    const getData = (e) => {
-        e.preventDefault();
-        const form = e.target;
-        const formData = new FormData(form);
-        for (let data of formData.entries()) {
-            let key = data[0];
-            let value = data[1];
-            if (typeof value === "object") {
-                value = URL.createObjectURL(value);
-            }
-            allData[key] = value;
-        }
-    };
-    const deleteUser = (e) => {
-        const temp_delete = [...formState];
-        temp_delete.splice(e, 1);
-        return changeFormState(temp_delete);
-    }
-    const editUser = (data) => {
-        console.log(data);
-        setInput(data);
-        setModal(true);
-        changeSubmit(false);
-
-    }
-    const insertData = (e) => {
-        getData(e);
-        return (
-            changeFormState((old_data) => {
-                return [...old_data, allData];
-            }),
-            setModal(false),
-            setInput({
-                username: '',
-                email: '',
-                mobile: ''
-            })
-        );
-    }
-    const updateData = (e) => {
-        getData(e);
-        console.log(allData);
-    }
-    const RowData = (data) => {
-        return (
-            <tr>
-                <th>{data.userData.index + 1}</th>
-                <th>
-                    <img
-                        src={data.userData.picture}
-                        height="50"
-                        width="50"
-                        className="rounded-circle"
-                    />
-                </th>
-                <th>{data.userData.username}</th>
-                <th>{data.userData.email}</th>
-                <th>{data.userData.mobile}</th>
-                <th>{new Date().toLocaleDateString()}</th>
-                <th>
-                    <Button onClick={() => editUser(data.userData)} variant="info" className="badge me-2">
-                        <i className="fa fa-edit"></i> Edit
-                    </Button>
-                    <Button className="badge" onClick={() => deleteUser(data.userData.index)} variant="danger">
-                        <i className="fa fa-trash"></i> Delete
-                    </Button>
-                </th>
-            </tr>
-        );
-    };
+  };
+  const deleteUser = (e) => {
+    const temp_delete = [...formState];
+    temp_delete.splice(e, 1);
+    return changeFormState(temp_delete);
+  };
+  const editUser = (data) => {
+    sessionStorage.setItem("index", data.index);
+    setInput(data);
+    setModal(true);
+    changeSubmit(false);
+  };
+  const insertData = (e) => {
+    getData(e);
     return (
-        <>
-            <Container>
-                <h2 className="text-primary display-5 text-center py-2 mt-5">
-                    Arsil Malek's Production
-                </h2>
-                <hr className="my-5" />
-                <Button className="add-user" onClick={() => (setInput({
-                    username: '',
-                    email: '',
-                    mobile: ''
-                }), setModal(true), changeSubmit(true))}>
-                    <i className="fa fa-plus"></i>
-                </Button>
-                <Modal show={modal} onHide={() => setModal(false)}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>
-                            <i className="fa fa-user-plus me-2"></i>Add user
-                        </Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <Form onSubmit={submit ? insertData : updateData}>
-                            <Form.Group className="mb-3">
-                                <Form.Label>Username</Form.Label>
-                                <Form.Control name="username" type="text" value={input.username} onChange={setInputData} />
-                            </Form.Group>
-
-                            <Form.Group className="mb-3">
-                                <Form.Label>Email</Form.Label>
-                                <Form.Control name="email" type="text" value={input.email} onChange={setInputData} />
-                            </Form.Group>
-
-                            <Form.Group className="mb-3">
-                                <Form.Label>Mobile</Form.Label>
-                                <Form.Control name="mobile" type="text" value={input.mobile} onChange={setInputData} />
-                            </Form.Group>
-
-                            <Form.Group className="mb-4">
-                                <Form.Label>Upload</Form.Label>
-                                <Form.Control name="picture" type="file" accept="image/*" />
-                            </Form.Group>
-
-                            <Button type="submit" variant="success">
-                                {
-                                    submit ? 'Submit' : 'Update'
-                                }
-                            </Button>
-
-                        </Form>
-                    </Modal.Body>
-                </Modal>
-                <Table striped bordered hover>
-                    <thead>
-                        <tr>
-                            <th>S/NO</th>
-                            <th>Picture</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Mobile</th>
-                            <th>Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {formState.map((item, index) => {
-                            item["index"] = index;
-                            return <RowData userData={item} key={index} />;
-                        })}
-                    </tbody>
-                </Table>
-            </Container>
-            {console.log(formState)}
-        </>
+      changeFormState((old_data) => {
+        return [...old_data, allData];
+      }),
+      setModal(false),
+      setInput({
+        username: "",
+        email: "",
+        mobile: "",
+      })
     );
+  };
+  const updateData = (e) => {
+    getData(e);
+    let index = sessionStorage.getItem("index");
+    let tmp = [...formState];
+    tmp[index] = allData;
+    return(
+      changeFormState(tmp),
+      setModal(false)
+    );
+  };
+  const RowData = (data) => {
+    return (
+      <tr>
+        <th>{data.userData.index + 1}</th>
+        <th>
+          <img
+            src={data.userData.picture}
+            height="50"
+            width="50"
+            className="rounded-circle"
+          />
+        </th>
+        <th>{data.userData.username}</th>
+        <th>{data.userData.email}</th>
+        <th>{data.userData.mobile}</th>
+        <th>{new Date().toLocaleDateString()}</th>
+        <th>
+          <Button
+            onClick={() => editUser(data.userData)}
+            variant="info"
+            className="badge me-2"
+          >
+            <i className="fa fa-edit"></i> Edit
+          </Button>
+          <Button
+            className="badge"
+            onClick={() => deleteUser(data.userData.index)}
+            variant="danger"
+          >
+            <i className="fa fa-trash"></i> Delete
+          </Button>
+        </th>
+      </tr>
+    );
+  };
+  return (
+    <>
+      <Container>
+        <h2 className="text-primary display-5 text-center py-2 mt-5">
+          Arsil Malek's Production
+        </h2>
+        <hr className="my-5" />
+        <Button
+          className="add-user"
+          onClick={() => (
+            setInput({
+              username: "",
+              email: "",
+              mobile: "",
+            }),
+            setModal(true),
+            changeSubmit(true)
+          )}
+        >
+          <i className="fa fa-plus"></i>
+        </Button>
+        <Modal show={modal} onHide={() => setModal(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              <i className="fa fa-user-plus me-2"></i>Add user
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form onSubmit={submit ? insertData : updateData}>
+              <Form.Group className="mb-3">
+                <Form.Label>Username</Form.Label>
+                <Form.Control
+                  name="username"
+                  type="text"
+                  value={input.username}
+                  onChange={setInputData}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  name="email"
+                  type="text"
+                  value={input.email}
+                  onChange={setInputData}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Mobile</Form.Label>
+                <Form.Control
+                  name="mobile"
+                  type="text"
+                  value={input.mobile}
+                  onChange={setInputData}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-4">
+                <Form.Label>Upload</Form.Label>
+                <Form.Control name="picture" type="file" accept="image/*" />
+              </Form.Group>
+
+              <Button type="submit" variant="success">
+                {submit ? "Submit" : "Update"}
+              </Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>S/NO</th>
+              <th>Picture</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Mobile</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {formState.map((item, index) => {
+              item["index"] = index;
+              return <RowData userData={item} key={index} />;
+            })}
+          </tbody>
+        </Table>
+      </Container>
+      {console.log(formState)}
+    </>
+  );
 }
 
 export default Users;
