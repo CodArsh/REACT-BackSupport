@@ -1,0 +1,61 @@
+1 / 2. Home FILE
+----------------
+import React, {useEffect, useState, useCallback} from 'react';
+import {Alert, Modal, View} from 'react-native';
+import {Loader, Font, Button, Main, Card} from '../reusable';
+import {primary, secondary, success, warning, error, info} from '../colors';
+
+const Home = () => {
+  const [refHome, setRefHome] = useState(false);
+  const handle = useCallback(() => {
+    setRefHome(true);
+    setTimeout(() => {
+      setRefHome(false);
+    }, 2000);
+  }, [refHome]);
+  const detectScrollEnd = ({nativeEvent}) => {
+    const {layoutMeasurement, contentOffset, contentSize} = nativeEvent;
+    const endScroll =
+      layoutMeasurement.height + contentOffset.y >= contentSize.height;
+    if (endScroll) {
+      console.log('END');
+    }
+  };
+  return (
+    <Main refreshing={refHome} onRefresh={handle} onScroll={detectScrollEnd}>
+      {Array(10)
+        .fill('ARSIL')
+        .map((item, index) => (
+          <Card
+            key={index}
+            title={item}
+            image={require('../../assets/welcome-screen/a.png')}
+          />
+        ))}
+      <Button>Click</Button>
+    </Main>
+  );
+};
+
+export default Home;
+
+
+2/2 . Main File
+-----------------
+import {View, Text, ScrollView, RefreshControl} from 'react-native';
+import React from 'react';
+
+const Main = ({children, onScroll = null, ...rest}) => {
+  return (
+    <View>
+      <ScrollView
+        onScroll={onScroll}
+        refreshControl={<RefreshControl {...rest} />}>
+        {children}
+      </ScrollView>
+    </View>
+  );
+};
+
+export default Main;
+
