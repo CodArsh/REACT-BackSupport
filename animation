@@ -1,0 +1,69 @@
+import {View, Text, Animated, Button} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+
+const Login = () => {
+  const height = useRef(new Animated.Value(0)).current;
+  const width = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+  const [finish, setFinish] = useState(false);
+  const open = () => {
+    Animated.sequence([
+      Animated.timing(height, {
+        toValue: 300,
+        duration: 1000,
+        useNativeDriver: false,
+      }),
+      Animated.timing(width, {
+        toValue: 300,
+        duration: 1000,
+        useNativeDriver: false,
+      }),
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: false,
+      }),
+    ]).start(() => {
+      setFinish(true);
+    });
+  };
+
+  const close = () => {
+    Animated.parallel([
+      Animated.timing(height, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: false,
+      }),
+      Animated.timing(width, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: false,
+      }),
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: false,
+      }),
+    ]).start(() => {
+      setFinish(false);
+    });
+  };
+  return (
+    <View>
+      <Button title={'Test'} onPress={() => (finish ? close() : open())} />
+      <Animated.View
+        style={{
+          opacity,
+          width,
+          height,
+          backgroundColor: 'green',
+          margin: 20,
+        }}>
+        <Text>Login</Text>
+      </Animated.View>
+    </View>
+  );
+};
+
+export default Login;
