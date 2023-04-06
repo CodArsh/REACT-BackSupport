@@ -1,0 +1,71 @@
+import React, {useEffect, useState} from 'react';
+import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {Card, Loader} from '../reusable';
+import Icon from 'react-native-vector-icons/AntDesign';
+import axios from 'axios';
+const Login = () => {
+  const [products, setProducts] = useState(null);
+  const [refresh, setRefresh] = useState(false);
+  const [select, setSelect] = useState(null);
+  useEffect(() => {
+    const req = async () => {
+      const {data} = await axios({
+        method: 'get',
+        url: 'https://fakestoreapi.com/products',
+      });
+      setProducts(data);
+      setRefresh(false);
+    };
+    req();
+  }, [refresh]);
+  const flatlist_ui = ({item}) => {
+    return (
+      <TouchableOpacity onPress={() => setSelect(item?.id)}>
+        <View>
+          <Icon
+            name="check"
+            size={25}
+            color={item?.id === select ? 'green' : 'gray'}
+            style={{position: 'absolute', top: 10, left: 10, zIndex: 1}}
+          />
+          <Card
+            image={{uri: item?.image}}
+            title={item?.title}
+            titleStyle={{
+              fontSize: 22,
+              color: 'tomato',
+              fontWeight: 'bold',
+            }}
+            description={item?.description.slice(0, 60) + '...'}
+            descStyle={{
+              fontSize: 18,
+              color: 'black',
+            }}
+          />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+  return (
+    (products && (
+      <View style={{padding: 20}}>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={products}
+          renderItem={flatlist_ui}
+          keyExtractor={item => item?.id}
+          refreshing={refresh}
+          onRefresh={() => setRefresh(true)}
+          onEndReached={() => console.log('end')}
+          extraData={select}
+          initialScrollIndex={4}
+          ListHeaderComponent={() => <Text>HEADER</Text>}
+          ListHeaderComponentStyle={{marginBottom: 20}}
+          // inverted={true}
+        />
+      </View>
+    )) || <Loader />
+  );
+};
+
+export default Login;
