@@ -1,0 +1,70 @@
+import {View, Text, Animated} from 'react-native';
+import React, {useEffect, useRef} from 'react';
+
+export default function Login() {
+  const a = useRef(new Animated.Value(0)).current;
+  const b = useRef(new Animated.Value(0)).current;
+  const c = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+
+    // 3 TYPES ANIMATIONS
+    
+    // Animated.sequence([
+    //   Animated.timing(a, {toValue: 1, useNativeDriver: true}),
+    //   Animated.timing(b, {toValue: 1, useNativeDriver: true}),
+    //   Animated.timing(c, {toValue: 1, useNativeDriver: true}),
+    // ]).start();
+
+    // Animated.parallel([
+    //   Animated.timing(a, {toValue: 1, useNativeDriver: true}),
+    //   Animated.timing(b, {toValue: 1, useNativeDriver: true}),
+    //   Animated.timing(c, {toValue: 1, useNativeDriver: true}),
+    // ]).start();
+
+    // Animated.stagger(100,[
+    //   Animated.timing(a, {toValue: 1, useNativeDriver: true}),
+    //   Animated.timing(b, {toValue: 1, useNativeDriver: true}),
+    //   Animated.timing(c, {toValue: 1, useNativeDriver: true}),
+    // ]).start();
+  }, []);
+  return (
+    <View>
+      <Animated.Image
+        source={{
+          uri: 'https://avatars.githubusercontent.com/u/95223801?s=40&v=4',
+        }}
+        style={{
+          height: 200,
+          width: 300,
+          aspectRatio: 1,
+          marginBottom: 16,
+          opacity: a,
+        }}
+      />
+      <Animated.Image
+        source={{
+          uri: 'https://avatars.githubusercontent.com/u/95223801?s=40&v=4',
+        }}
+        style={{
+          height: 200,
+          width: 300,
+          aspectRatio: 1,
+          marginBottom: 16,
+          opacity: b,
+        }}
+      />
+      <Animated.Image
+        source={{
+          uri: 'https://avatars.githubusercontent.com/u/95223801?s=40&v=4',
+        }}
+        style={{
+          height: 200,
+          width: 300,
+          aspectRatio: 1,
+          marginBottom: 16,
+          opacity: c,
+        }}
+      />
+    </View>
+  );
+}
