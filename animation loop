@@ -1,0 +1,52 @@
+import {View, Text, Animated} from 'react-native';
+import React, {useEffect, useRef} from 'react';
+
+export default function Login() {
+  const anim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(anim, {
+          toValue: 1,
+          useNativeDriver: false,
+          duration: 500,
+        }),
+        Animated.timing(anim, {
+          toValue: 2,
+          useNativeDriver: false,
+          duration: 500,
+        }),
+        Animated.timing(anim, {
+          toValue: 3,
+          useNativeDriver: false,
+          duration: 500,
+        }),
+      ]),
+      {
+        useNativeDriver: true,
+      },
+    ).start();
+  }, []);
+  return (
+    <View>
+      <Animated.View
+        style={{
+          width: anim.interpolate({
+            inputRange: [0, 1, 2],
+            outputRange: [50, 100, 200],
+          }),
+          height:anim.interpolate({
+            inputRange: [0, 1, 2],
+            outputRange: [50, 100, 200],
+          }),
+          // opacity: anim,
+          backgroundColor: anim.interpolate({
+            inputRange: [0, 1, 2],
+            outputRange: ['red', 'green', 'blue'],
+          }),
+          margin: 20,
+        }}
+      />
+    </View>
+  );
+}
