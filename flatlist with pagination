@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList, Text, View, ActivityIndicator } from 'react-native';
+import { FlatList, Text, View, ActivityIndicator, RefreshControl } from 'react-native';
 import axios from 'axios';
 
 const App = () => {
@@ -7,6 +7,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -15,12 +16,14 @@ const App = () => {
         setData((prevData) => [...prevData, ...response.data]);
         setTotalPages(Math.ceil(parseInt(response.headers['x-total-count'], 10) / 10));
         setIsLoading(false);
+        setIsRefreshing(false);
       })
       .catch((error) => {
         console.error(error);
         setIsLoading(false);
+        setIsRefreshing(false);
       });
-  }, [page]);
+  }, [page, isRefreshing]);
 
   const renderItem = ({ item }) => (
     <View style={{ padding: 10 }}>
@@ -36,6 +39,12 @@ const App = () => {
     setPage((prevPage) => prevPage + 1);
   };
 
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setData([]);
+    setPage(1);
+  };
+
   const renderFooter = () => {
     if (!isLoading) {
       return null;
@@ -48,10 +57,16 @@ const App = () => {
     <FlatList
       data={data}
       renderItem={renderItem}
-      keyExtractor={(item) => item.id.toString()}
+      keyExtractor={(item, index) => `key-${index}`}
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.1}
       ListFooterComponent={renderFooter}
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefreshing}
+          onRefresh={handleRefresh}
+        />
+      }
     />
   );
 };
