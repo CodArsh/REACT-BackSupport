@@ -1,0 +1,59 @@
+import React, { useState, useEffect } from 'react';
+import { FlatList, Text, View, ActivityIndicator } from 'react-native';
+import axios from 'axios';
+
+const App = () => {
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(null);
+
+  useEffect(() => {
+    setIsLoading(true);
+    axios.get(`https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=10`)
+      .then((response) => {
+        setData((prevData) => [...prevData, ...response.data]);
+        setTotalPages(Math.ceil(parseInt(response.headers['x-total-count'], 10) / 10));
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setIsLoading(false);
+      });
+  }, [page]);
+
+  const renderItem = ({ item }) => (
+    <View style={{ padding: 10 }}>
+      <Text>{item.title}</Text>
+    </View>
+  );
+
+  const handleLoadMore = () => {
+    if (isLoading || page === totalPages) {
+      return;
+    }
+
+    setPage((prevPage) => prevPage + 1);
+  };
+
+  const renderFooter = () => {
+    if (!isLoading) {
+      return null;
+    }
+
+    return <ActivityIndicator size="large" />;
+  };
+
+  return (
+    <FlatList
+      data={data}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id.toString()}
+      onEndReached={handleLoadMore}
+      onEndReachedThreshold={0.1}
+      ListFooterComponent={renderFooter}
+    />
+  );
+};
+
+export default App;
